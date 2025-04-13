@@ -12,7 +12,7 @@ class WebSocketDemoWidget extends StatefulWidget {
 
 class WebSocketDemoState extends State<WebSocketDemoWidget> {
   WebSocketChannel? _channel;
-  final String _webSocketUrl = 'ws://10.0.0.144:500/ws';
+  final String _webSocketUrl = 'ws://10.0.0.13:5195/ws';
   String _connectionStatus = 'Disconnected'; // Connection status text
   String _sessionId = '';
   int _countA = 0;
