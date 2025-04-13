@@ -10,6 +10,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSocketLibrary", "WebSocketLibrary\WebSocketLibrary.csproj", "{CB1CB9A1-AACA-E948-2BA1-996BC19E139B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSocketLibrary.Tests", "WebSocketLibrary.Tests\WebSocketLibrary.Tests.csproj", "{AC6F35A0-A923-AC5A-4991-52D404A05749}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +24,14 @@ Global
 		{E50198B0-68D2-2100-A5A1-89F353B95B9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E50198B0-68D2-2100-A5A1-89F353B95B9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E50198B0-68D2-2100-A5A1-89F353B95B9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB1CB9A1-AACA-E948-2BA1-996BC19E139B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB1CB9A1-AACA-E948-2BA1-996BC19E139B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB1CB9A1-AACA-E948-2BA1-996BC19E139B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB1CB9A1-AACA-E948-2BA1-996BC19E139B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC6F35A0-A923-AC5A-4991-52D404A05749}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC6F35A0-A923-AC5A-4991-52D404A05749}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC6F35A0-A923-AC5A-4991-52D404A05749}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC6F35A0-A923-AC5A-4991-52D404A05749}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
