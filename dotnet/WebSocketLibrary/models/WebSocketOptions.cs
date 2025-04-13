@@ -12,6 +12,13 @@ namespace WebSocketLibrary.Models
         /// Default is 4KB.
         /// </summary>
         public int MaxMessageSize { get; set; } = 4 * 1024;
+        
+        /// <summary>
+        /// The maximum size of a single WebSocket frame in bytes.
+        /// Messages larger than this size will be automatically fragmented.
+        /// Default is 1KB.
+        /// </summary>
+        public int MaxFrameSize { get; set; } = 1 * 1024;
 
         /// <summary>
         /// The idle timeout for client connections in seconds.

@@ -22,6 +22,7 @@ namespace WebSocketLibrary.Services
         private readonly ILogger<WebSocketHandler> _logger;
         private readonly ConcurrentDictionary<string, WebSocketClientSession> _sessions = new ConcurrentDictionary<string, WebSocketClientSession>();
         private readonly Timer _idleClientTimer;
+        private readonly WebSocketFrameHandler _frameHandler;
 
         /// <summary>
         /// Event raised when a client connects to the WebSocket server.
@@ -46,6 +47,7 @@ namespace WebSocketLibrary.Services
         public WebSocketHandler(IOptions<WebSocketOptions> options, ILogger<WebSocketHandler> logger) {
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _frameHandler = new WebSocketFrameHandler(_options, _logger);
 
             // Start a timer to periodically check for and disconnect idle clients
             _idleClientTimer = new Timer(
@@ -155,37 +157,13 @@ namespace WebSocketLibrary.Services
             // Process messages using the pipeline
             await pipeline.ProcessWebSocketMessagesAsync(
                 session.WebSocket,
-                // Message handler
+                // Message handler - this processes each frame received
                 message => {
                     // Update activity timestamp
                     session.UpdateActivity();
 
-                    // Process the message based on type
-                    if (message.MessageType == WebSocketMessageType.Text) {
-                        string? textContent = message.GetTextContent();
-                        _logger.LogDebug("Received text message from {SessionId}: {Message}",
-                            sessionId, textContent);
-                    } else if (message.MessageType == WebSocketMessageType.Binary) {
-                        _logger.LogDebug("Received binary message from {SessionId}: {Length} bytes",
-                            sessionId, message.Data.Length);
-                    }
-
-                    // Raise the message received event
-                    OnMessageReceived(session, message);
-
-                    // Handle ping with pong response
-                    if (message.MessageType == WebSocketMessageType.Binary && 
-                        message.Data.Length == 1 && 
-                        message.Data[0] == 0x09) {
-                        _logger.LogDebug("Received ping from {SessionId}, sending pong", sessionId);
-                        var pongMessage = new WebSocketMessage(
-                            WebSocketMessageType.Binary, 
-                            new byte[] { 0x0A }, // pong frame
-                            true);
-                        
-                        // Fire and forget the pong response
-                        _ = SendMessageInternalAsync(session, pongMessage, CancellationToken.None);
-                    }
+                    // Process the received frame or complete message
+                    ProcessReceivedMessage(session, message);
                 },
                 // Close handler
                 closeStatus => {
@@ -193,6 +171,67 @@ namespace WebSocketLibrary.Services
                         sessionId, closeStatus);
                 },
                 cancellationToken);
+        }
+
+        /// <summary>
+        /// Processes a received WebSocket message or message fragment.
+        /// </summary>
+        /// <param name="session">The client session</param>
+        /// <param name="fragment">The received message or fragment</param>
+        private void ProcessReceivedMessage(WebSocketClientSession session, WebSocketMessage fragment)
+        {
+            // Process the fragment and get the complete message if available
+            WebSocketMessage? completeMessage = _frameHandler.ProcessFragment(session.SessionId, fragment);
+            
+            if (completeMessage != null)
+            {
+                // Process the complete message
+                if (completeMessage.MessageType == WebSocketMessageType.Text)
+                {
+                    string? textContent = completeMessage.GetTextContent();
+                    _logger.LogDebug("Received complete text message from {SessionId}: {Length} bytes, content: {Message}",
+                        session.SessionId, completeMessage.Size, textContent);
+                }
+                else if (completeMessage.MessageType == WebSocketMessageType.Binary)
+                {
+                    _logger.LogDebug("Received complete binary message from {SessionId}: {Length} bytes",
+                        session.SessionId, completeMessage.Size);
+                }
+                
+                // Handle ping with pong response
+                if (completeMessage.MessageType == WebSocketMessageType.Binary && 
+                    completeMessage.Data.Length == 1 && 
+                    completeMessage.Data[0] == 0x09)
+                {
+                    _logger.LogDebug("Received ping from {SessionId}, sending pong", session.SessionId);
+                    var pongMessage = new WebSocketMessage(
+                        WebSocketMessageType.Binary, 
+                        new byte[] { 0x0A }, // pong frame
+                        true);
+                    
+                    // Fire and forget the pong response
+                    _ = SendMessageInternalAsync(session, pongMessage, CancellationToken.None);
+                }
+                else
+                {
+                    // Raise the message received event for the complete message
+                    OnMessageReceived(session, completeMessage);
+                }
+            }
+            else
+            {
+                // This was a fragment of a larger message
+                if (fragment.MessageType == WebSocketMessageType.Text)
+                {
+                    _logger.LogDebug("Received text fragment from {SessionId}: {Length} bytes, EndOfMessage: {EndOfMessage}, FrameIndex: {FrameIndex}",
+                        session.SessionId, fragment.Size, fragment.EndOfMessage, fragment.FrameIndex);
+                }
+                else if (fragment.MessageType == WebSocketMessageType.Binary)
+                {
+                    _logger.LogDebug("Received binary fragment from {SessionId}: {Length} bytes, EndOfMessage: {EndOfMessage}, FrameIndex: {FrameIndex}",
+                        session.SessionId, fragment.Size, fragment.EndOfMessage, fragment.FrameIndex);
+                }
+            }
         }
 
         // Keep the original ReceiveMessagesAsync method as a fallback
@@ -270,20 +309,20 @@ namespace WebSocketLibrary.Services
             CancellationToken cancellationToken) {
             try {
                 if (session.WebSocket.State == WebSocketState.Open) {
-                    await session.WebSocket.SendAsync(
-                        new ArraySegment<byte>(message.Data),
-                        message.MessageType,
-                        message.EndOfMessage,
+                    // Use the frame handler to send the message, which handles fragmentation
+                    await _frameHandler.SendMessageAsync(
+                        session.WebSocket,
+                        message,
                         cancellationToken);
 
                     session.UpdateActivity();
 
                     if (message.MessageType == WebSocketMessageType.Text) {
                         _logger.LogDebug("Sent text message to {SessionId}: {Length} bytes",
-                            session.SessionId, message.Data.Length);
+                            session.SessionId, message.Size);
                     } else if (message.MessageType == WebSocketMessageType.Binary) {
                         _logger.LogDebug("Sent binary message to {SessionId}: {Length} bytes",
-                            session.SessionId, message.Data.Length);
+                            session.SessionId, message.Size);
                     }
                 }
             } catch (OperationCanceledException) {
@@ -309,6 +348,9 @@ namespace WebSocketLibrary.Services
             string statusDescription, CancellationToken cancellationToken) {
             if (_sessions.TryRemove(sessionId, out WebSocketClientSession? session)) {
                 try {
+                    // Clean up any incomplete message fragments for this session
+                    _frameHandler.ClearSession(sessionId);
+                    
                     if (session.WebSocket.State == WebSocketState.Open) {
                         // Try to close the WebSocket gracefully
                         await session.WebSocket.CloseAsync(

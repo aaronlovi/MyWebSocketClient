@@ -6,7 +6,7 @@
 | XP.1 | Add cross-platform support. Target .net8, and .netstandard 2.0 for compatibility with .NET Framework. Note, if .Net standard 2.0 is not installed, then install it first. | Complete |
 | IMP.1 | Enhance package references. Add System.IO.Pipelines for more efficient data processing, and use it in the project where appropriate. Use it to: Minimize memory allocations and buffer copying; Handle parsing protocols without excess memory allocations; Efficiently manage byte streams; Handle message fragments more efficiently; Reduce garbage collection pressure; Improve the throughput for large messages | Complete |
 | IMP.2 | Source Link Support. Add SourceLink support for better debugging experience into .csproj files as appropriate. | Complete |
-| IMP.3 | Implement message framing and fragmentation support. Add to unit tests in the WebSocketLibrary.Tests project | Pending |
+| IMP.3 | Implement message framing and fragmentation support. Add to unit tests in the WebSocketLibrary.Tests project | Complete |
 | IMP.4 | Implement a heartbeat mechanism. Add to unit tests in the WebSocketLibrary.Tests project. Heartbeat should: send periodig ping framtes to clients (using WebSocket protocol built-in ping/pong mechanism); Track which clients respond with pong frames; Disconnect clients that fail to respond to multiple pings | Pending |
 | IMP.5 | Add compression support (per RFC 7692). Add to unit tests in the WebSocketLibrary.Tests project. Add to unit tests in the WebSocketLibrary.Tests project | Pending |
 | IMP.6 | Add message serialization helpers. Add to unit tests in the WebSocketLibrary.Tests project. Add JSON serialization/deserialization helpers to the `WebSocketMessage` class as appropriate. | Pending |
