@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WebSocketLibrary.Contracts;
 using WebSocketLibrary.Models;
+using WebSocketLibrary.Utilities;
 
 namespace WebSocketLibrary.Services
 {
@@ -75,8 +76,8 @@ namespace WebSocketLibrary.Services
             OnClientConnected(session);
 
             try {
-                // Process messages from the client
-                await ReceiveMessagesAsync(session, cancellationToken);
+                // Process messages from the client using the efficient pipelines-based approach
+                await ReceiveMessagesWithPipelinesAsync(session, cancellationToken);
             } catch (OperationCanceledException) {
                 _logger.LogInformation("Client {SessionId} disconnected: operation canceled", sessionId);
             } catch (WebSocketException ex) {
@@ -141,11 +142,60 @@ namespace WebSocketLibrary.Services
         }
 
         /// <summary>
-        /// Processes incoming messages from a client.
+        /// Processes incoming messages from a client using System.IO.Pipelines for efficiency.
         /// </summary>
         /// <param name="session">The client session</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>A task representing the asynchronous operation</returns>
+        private async Task ReceiveMessagesWithPipelinesAsync(WebSocketClientSession session, CancellationToken cancellationToken)
+        {
+            string sessionId = session.SessionId;
+            var pipeline = new MessagePipeline(_options, _logger);
+
+            // Process messages using the pipeline
+            await pipeline.ProcessWebSocketMessagesAsync(
+                session.WebSocket,
+                // Message handler
+                message => {
+                    // Update activity timestamp
+                    session.UpdateActivity();
+
+                    // Process the message based on type
+                    if (message.MessageType == WebSocketMessageType.Text) {
+                        string? textContent = message.GetTextContent();
+                        _logger.LogDebug("Received text message from {SessionId}: {Message}",
+                            sessionId, textContent);
+                    } else if (message.MessageType == WebSocketMessageType.Binary) {
+                        _logger.LogDebug("Received binary message from {SessionId}: {Length} bytes",
+                            sessionId, message.Data.Length);
+                    }
+
+                    // Raise the message received event
+                    OnMessageReceived(session, message);
+
+                    // Handle ping with pong response
+                    if (message.MessageType == WebSocketMessageType.Binary && 
+                        message.Data.Length == 1 && 
+                        message.Data[0] == 0x09) {
+                        _logger.LogDebug("Received ping from {SessionId}, sending pong", sessionId);
+                        var pongMessage = new WebSocketMessage(
+                            WebSocketMessageType.Binary, 
+                            new byte[] { 0x0A }, // pong frame
+                            true);
+                        
+                        // Fire and forget the pong response
+                        _ = SendMessageInternalAsync(session, pongMessage, CancellationToken.None);
+                    }
+                },
+                // Close handler
+                closeStatus => {
+                    _logger.LogInformation("Client {SessionId} initiated close with status: {Status}", 
+                        sessionId, closeStatus);
+                },
+                cancellationToken);
+        }
+
+        // Keep the original ReceiveMessagesAsync method as a fallback
         private async Task ReceiveMessagesAsync(WebSocketClientSession session, CancellationToken cancellationToken) {
             byte[] buffer = new byte[_options.MaxMessageSize];
             string sessionId = session.SessionId;
