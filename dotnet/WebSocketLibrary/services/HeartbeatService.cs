@@ -1,4 +1,5 @@
 using System;
+using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -31,15 +32,31 @@ namespace WebSocketLibrary.services
         }
 
         /// <summary>
-        /// Starts the heartbeat service asynchronously.
+        /// Sends a WebSocket ping frame.
         /// </summary>
+        /// <param name="webSocket">The WebSocket instance to send the ping frame to.</param>
         /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        public async Task StartAsync(CancellationToken cancellationToken)
+        private async Task SendPingAsync(WebSocket webSocket, CancellationToken cancellationToken)
+        {
+            if (webSocket.State == WebSocketState.Open)
+            {
+                byte[] buffer = new byte[0]; // Empty payload for ping frame
+                await webSocket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Binary, true, cancellationToken);
+            }
+        }
+
+        /// <summary>
+        /// Starts the heartbeat service asynchronously.
+        /// </summary>
+        /// <param name="webSocket">The WebSocket instance to send ping frames to.</param>
+        /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public async Task StartAsync(WebSocket webSocket, CancellationToken cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                // Logic for sending ping frames will be implemented later
+                await SendPingAsync(webSocket, cancellationToken);
                 await Task.Delay(PingInterval, cancellationToken);
             }
         }

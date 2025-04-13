@@ -9,7 +9,7 @@
 | IMP.3 | Implement message framing and fragmentation support. Add to unit tests in the WebSocketLibrary.Tests project | Complete |
 | IMP.4 | Implement a heartbeat mechanism. Add to unit tests in the WebSocketLibrary.Tests project. | Replaced by sub-steps |
 | IMP.4.1 | Create a HeartbeatService class in the WebSocketLibrary project with configuration options (ping interval, timeout threshold). | Complete |
-| IMP.4.2 | Implement periodic ping mechanism in HeartbeatService that sends WebSocket ping frames at configurable intervals. | Pending |
+| IMP.4.2 | Implement periodic ping mechanism in HeartbeatService that sends WebSocket ping frames at configurable intervals. | Complete |
 | IMP.4.3 | Implement tracking of pong responses from clients in WebSocketClientSession class. | Pending |
 | IMP.4.4 | Add timeout detection logic to identify unresponsive clients that fail to respond with pong frames. | Pending |
 | IMP.4.5 | Implement client disconnection mechanism for clients that exceed the timeout threshold. | Pending |
