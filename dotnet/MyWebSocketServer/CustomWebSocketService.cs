@@ -190,6 +190,10 @@ public sealed class CustomWebSocketService : IDisposable {
         }
     }
 
+    /// <summary>
+    /// Disposes the CustomWebSocketService instance, cancels all background tasks,
+    /// cleans up resources, and unsubscribes from WebSocketHandler events.
+    /// </summary>
     public void Dispose() {
         foreach ((string key, CancellationTokenSource cts) in _colorMessageTokenSources) {
             try {
