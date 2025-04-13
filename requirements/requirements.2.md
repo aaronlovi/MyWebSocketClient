@@ -28,4 +28,3 @@
 
 - Only modify files in the `dotnet` folder.
 - After each step, commit and push the work to git remote.  Add a one or two line description of the commit.
-
