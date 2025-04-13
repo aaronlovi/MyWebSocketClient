@@ -1,7 +1,7 @@
 <Project>
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<!-- Individual projects will specify their own TargetFrameworks -->
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<NoWarn>IDE0290</NoWarn>
