@@ -7,7 +7,14 @@
 | IMP.1 | Enhance package references. Add System.IO.Pipelines for more efficient data processing, and use it in the project where appropriate. Use it to: Minimize memory allocations and buffer copying; Handle parsing protocols without excess memory allocations; Efficiently manage byte streams; Handle message fragments more efficiently; Reduce garbage collection pressure; Improve the throughput for large messages | Complete |
 | IMP.2 | Source Link Support. Add SourceLink support for better debugging experience into .csproj files as appropriate. | Complete |
 | IMP.3 | Implement message framing and fragmentation support. Add to unit tests in the WebSocketLibrary.Tests project | Complete |
-| IMP.4 | Implement a heartbeat mechanism. Add to unit tests in the WebSocketLibrary.Tests project. Heartbeat should: send periodic ping frames to clients (using WebSocket protocol built-in ping/pong mechanism); Track which clients respond with pong frames; Disconnect clients that fail to respond to multiple pings | Pending |
+| IMP.4 | Implement a heartbeat mechanism. Add to unit tests in the WebSocketLibrary.Tests project. | Replaced by sub-steps |
+| IMP.4.1 | Create a HeartbeatService class in the WebSocketLibrary project with configuration options (ping interval, timeout threshold). | Pending |
+| IMP.4.2 | Implement periodic ping mechanism in HeartbeatService that sends WebSocket ping frames at configurable intervals. | Pending |
+| IMP.4.3 | Implement tracking of pong responses from clients in WebSocketClientSession class. | Pending |
+| IMP.4.4 | Add timeout detection logic to identify unresponsive clients that fail to respond with pong frames. | Pending |
+| IMP.4.5 | Implement client disconnection mechanism for clients that exceed the timeout threshold. | Pending |
+| IMP.4.6 | Add unit tests for HeartbeatService in the WebSocketLibrary.Tests project. | Pending |
+| IMP.4.7 | Integrate HeartbeatService with the existing WebSocketHandler and middleware. | Pending |
 | IMP.5 | Add compression support (per RFC 7692). Add to unit tests in the WebSocketLibrary.Tests project. Add to unit tests in the WebSocketLibrary.Tests project | Pending |
 | IMP.6 | Add message serialization helpers. Add to unit tests in the WebSocketLibrary.Tests project. Add JSON serialization/deserialization helpers to the `WebSocketMessage` class as appropriate. | Pending |
 | IMP.7 | Add WebSocket subprotocol negotiation support. Allow the server to declare supported subprotocols and negotiate with clients. | Pending |
