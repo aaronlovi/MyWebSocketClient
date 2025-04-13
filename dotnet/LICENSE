@@ -1,12 +1,16 @@
-LICENSE AGREEMENT
+WebSocket Library - A project by Aaron
 
-Copyright (c) 2025 Aaron Lovi. All rights reserved.
+Copyright (C) 2025 Aaron Lovi. All rights reserved.
 
-This software and associated documentation files (the "Software") are the proprietary and confidential property of Aaron Lovi. The Software is protected by copyright laws and international treaty provisions.
+Permission is hereby granted to view and use this software solely for evaluation purposes. Evaluation purposes are defined as the review, analysis, testing, or learning of the software to determine its suitability, functionality, or performance for a specific use case. Evaluation is limited to a period of 10 days from the date the software is first accessed by the end-user. Any other use of this software is strictly prohibited without prior written consent from Aaron Lovi.
 
-No part of the Software may be used, copied, modified, merged, published, distributed, sublicensed, and/or sold without the prior written permission of Aaron Lovi.
+The following restrictions apply:
+1. **No Commercial Use**: This software may not be used, in whole or in part, for any commercial purpose.
+2. **No Modification**: This software may not be modified, altered, or adapted in any way.
+3. **No Unauthorized Distribution**: This software may not be copied, shared, published, or distributed in any form, except by the author for evaluation purposes.
+4. **No Private Use**: This software may not be used for private or personal purposes, except for evaluation purposes as explicitly permitted by this license.
+5. **No Patent Use**: This software may not be used to file or support any patent claims.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+This software is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and noninfringement. In no event shall the author be liable for any claim, damages, or other liability, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the software or the use or other dealings in the software.
 
-For permissions to use, modify, or distribute this software, please contact:
-Aaron Lovi (aaronlovi@gmail.com)
+For inquiries regarding licensing, please contact Aaron Lovi at aaronlovi@gmail.com.
