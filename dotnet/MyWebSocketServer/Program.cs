@@ -1,10 +1,7 @@
 using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using WebSocketLibrary.Models;
 using WebSocketLibrary.Utilities;
 
 namespace MyWebSocketServer;
@@ -26,11 +23,11 @@ public class Program {
     /// </summary>
     /// <param name="args">Command line arguments</param>
     public static void Main(string[] args) {
-        var builder = WebApplication.CreateBuilder(args);
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
         ConfigureServices(builder);
         ConfigureKestrel(builder);
 
-        var app = builder.Build();
+        WebApplication app = builder.Build();
         ConfigureMiddleWare(app);
 
         Console.WriteLine("Server started - accepting connections on path " + WebSocketPath);
@@ -43,10 +40,10 @@ public class Program {
     /// <param name="builder">The WebApplicationBuilder</param>
     private static void ConfigureServices(WebApplicationBuilder builder) {
         // Add logging
-        builder.Services.AddLogging();
-        
+        _ = builder.Services.AddLogging();
+
         // Add WebSocketLibrary services with custom configuration
-        builder.Services.AddWebSocketServices(options => {
+        _ = builder.Services.AddWebSocketServices(options => {
             options.Path = WebSocketPath;
             options.IdleTimeoutSeconds = DefaultIdleTimeoutSeconds;
             options.RequireAuthentication = RequireAuthentication;
@@ -54,7 +51,7 @@ public class Program {
         });
 
         // Register our custom WebSocket service that handles application-specific functionality
-        builder.Services.AddSingleton<CustomWebSocketService>();
+        _ = builder.Services.AddSingleton<CustomWebSocketService>();
     }
 
     /// <summary>
@@ -62,11 +59,11 @@ public class Program {
     /// </summary>
     /// <param name="builder">The WebApplicationBuilder</param>
     private static void ConfigureKestrel(WebApplicationBuilder builder) {
-        var kestrelConfig = builder.Configuration.GetSection("Kestrel:Endpoints");
+        Microsoft.Extensions.Configuration.IConfigurationSection kestrelConfig = builder.Configuration.GetSection("Kestrel:Endpoints");
 
-        builder.WebHost.ConfigureKestrel((context, options) => {
-            var httpEndpoint = kestrelConfig.GetSection("Http:Url").Value;
-            var httpsEndpoint = kestrelConfig.GetSection("Https:Url").Value;
+        _ = builder.WebHost.ConfigureKestrel((context, options) => {
+            string? httpEndpoint = kestrelConfig.GetSection("Http:Url").Value;
+            string? httpsEndpoint = kestrelConfig.GetSection("Https:Url").Value;
 
             if (!string.IsNullOrEmpty(httpEndpoint)) {
                 options.ListenAnyIP(new Uri(httpEndpoint).Port);
@@ -88,15 +85,15 @@ public class Program {
     /// <param name="app">The WebApplication</param>
     private static void ConfigureMiddleWare(WebApplication app) {
         // First add the standard ASP.NET Core WebSockets middleware
-        app.UseWebSockets();
-        
+        _ = app.UseWebSockets();
+
         // Then add our custom WebSocket middleware from WebSocketLibrary
-        app.UseWebSocketHandler();
+        _ = app.UseWebSocketHandler();
 
         // Resolve the CustomWebSocketService to initialize it and subscribe to WebSocket events
-        app.Services.GetRequiredService<CustomWebSocketService>();
+        _ = app.Services.GetRequiredService<CustomWebSocketService>();
 
         // Configure a default route that returns a simple message when accessing the root
-        app.MapGet("/", () => "WebSocket Server is running. Connect to " + WebSocketPath + " to use WebSockets.");
+        _ = app.MapGet("/", () => "WebSocket Server is running. Connect to " + WebSocketPath + " to use WebSockets.");
     }
 }

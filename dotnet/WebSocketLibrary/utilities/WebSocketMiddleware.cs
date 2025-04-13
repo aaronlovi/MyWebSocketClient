@@ -11,8 +11,7 @@ namespace WebSocketLibrary.Utilities;
 /// <summary>
 /// ASP.NET Core middleware for handling WebSocket connections.
 /// </summary>
-public class WebSocketMiddleware
-{
+public class WebSocketMiddleware {
     private readonly RequestDelegate _next;
     private readonly IWebSocketHandler _webSocketHandler;
     private readonly WebSocketOptions _options;
@@ -26,11 +25,10 @@ public class WebSocketMiddleware
     /// <param name="options">WebSocket configuration options</param>
     /// <param name="logger">Logger for the middleware</param>
     public WebSocketMiddleware(
-        RequestDelegate next, 
+        RequestDelegate next,
         IWebSocketHandler webSocketHandler,
         WebSocketOptions options,
-        ILogger<WebSocketMiddleware> logger)
-    {
+        ILogger<WebSocketMiddleware> logger) {
         _next = next ?? throw new ArgumentNullException(nameof(next));
         _webSocketHandler = webSocketHandler ?? throw new ArgumentNullException(nameof(webSocketHandler));
         _options = options ?? throw new ArgumentNullException(nameof(options));
@@ -42,32 +40,28 @@ public class WebSocketMiddleware
     /// </summary>
     /// <param name="context">The HTTP context for this request</param>
     /// <returns>A task representing the asynchronous operation</returns>
-    public async Task InvokeAsync(HttpContext context)
-    {
+    public async Task InvokeAsync(HttpContext context) {
         // Check if this is a WebSocket request
-        if (context.Request.Path == _options.Path)
-        {
-            if (context.WebSockets.IsWebSocketRequest)
-            {
+        if (context.Request.Path == _options.Path) {
+            if (context.WebSockets.IsWebSocketRequest) {
                 _logger.LogInformation("WebSocket request received at {Path}", _options.Path);
-                
+
                 // Authenticate if required
-                if (_options.RequireAuthentication && (context.User?.Identity?.IsAuthenticated != true))
-                {
+                if (_options.RequireAuthentication && (context.User?.Identity?.IsAuthenticated != true)) {
                     _logger.LogWarning("Unauthenticated WebSocket connection attempt rejected");
                     context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                     return;
                 }
 
                 // Accept the WebSocket connection
-                var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+                WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
                 _logger.LogInformation("WebSocket connection established");
-                
+
                 // Handle the WebSocket connection
                 await _webSocketHandler.HandleConnectionAsync(context, webSocket, context.RequestAborted);
                 return;
             }
-            
+
             // If it's not a WebSocket request but matches our path
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
             return;

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using WebSocketLibrary.Contracts;
-using WebSocketLibrary.Models;
 using WebSocketLibrary.Services;
 
 namespace WebSocketLibrary.Utilities;
@@ -11,8 +10,7 @@ namespace WebSocketLibrary.Utilities;
 /// <summary>
 /// Extension methods for adding and configuring WebSocket support in ASP.NET Core applications.
 /// </summary>
-public static class WebSocketExtensions
-{
+public static class WebSocketExtensions {
     /// <summary>
     /// Adds WebSocket services to the service collection.
     /// </summary>
@@ -21,20 +19,14 @@ public static class WebSocketExtensions
     /// <returns>The service collection for chaining</returns>
     public static IServiceCollection AddWebSocketServices(
         this IServiceCollection services,
-        Action<Models.WebSocketOptions>? configureOptions = null)
-    {
+        Action<Models.WebSocketOptions>? configureOptions = null) {
         // Configure options
-        if (configureOptions != null)
-        {
-            services.Configure(configureOptions);
-        }
-        else
-        {
-            services.Configure<Models.WebSocketOptions>(_ => { });
-        }
+        _ = configureOptions != null
+            ? services.Configure(configureOptions)
+            : services.Configure<Models.WebSocketOptions>(_ => { });
 
         // Register singleton instance of WebSocketHandler
-        services.AddSingleton<IWebSocketHandler, WebSocketHandler>();
+        _ = services.AddSingleton<IWebSocketHandler, WebSocketHandler>();
 
         return services;
     }
@@ -44,14 +36,13 @@ public static class WebSocketExtensions
     /// </summary>
     /// <param name="app">The application builder</param>
     /// <returns>The application builder for chaining</returns>
-    public static IApplicationBuilder UseWebSocketHandler(this IApplicationBuilder app)
-    {
+    public static IApplicationBuilder UseWebSocketHandler(this IApplicationBuilder app) {
         // Add our WebSocketLibrary options
-        var options = app.ApplicationServices
+        Models.WebSocketOptions options = app.ApplicationServices
             .GetRequiredService<IOptions<Models.WebSocketOptions>>().Value;
 
         // Add our custom WebSocket middleware
-        app.UseMiddleware<WebSocketMiddleware>(
+        _ = app.UseMiddleware<WebSocketMiddleware>(
             app.ApplicationServices.GetRequiredService<IWebSocketHandler>(),
             options);
 

@@ -1,6 +1,3 @@
-using System.Net.WebSockets;
-using System.Text.Json.Serialization;
-
 namespace MyWebSocketServer;
 
 // Simple session model

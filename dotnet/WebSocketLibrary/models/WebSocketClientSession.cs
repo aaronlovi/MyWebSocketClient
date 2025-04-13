@@ -8,15 +8,13 @@ namespace WebSocketLibrary.Models;
 /// Represents a connected WebSocket client session.
 /// Maintains client state and connection information.
 /// </summary>
-public class WebSocketClientSession
-{
+public class WebSocketClientSession {
     /// <summary>
     /// Creates a new WebSocketClientSession with the specified session ID and WebSocket.
     /// </summary>
     /// <param name="sessionId">The unique ID for this client session</param>
     /// <param name="webSocket">The WebSocket connection for this client</param>
-    public WebSocketClientSession(string sessionId, WebSocket webSocket)
-    {
+    public WebSocketClientSession(string sessionId, WebSocket webSocket) {
         SessionId = sessionId ?? throw new ArgumentNullException(nameof(sessionId));
         WebSocket = webSocket ?? throw new ArgumentNullException(nameof(webSocket));
         ConnectedAt = DateTime.UtcNow;
@@ -54,18 +52,12 @@ public class WebSocketClientSession
     /// <summary>
     /// Updates the last activity timestamp to the current time.
     /// </summary>
-    public void UpdateActivity()
-    {
-        LastActivityAt = DateTime.UtcNow;
-    }
+    public void UpdateActivity() => LastActivityAt = DateTime.UtcNow;
 
     /// <summary>
     /// Determines if the session has been idle for longer than the specified timeout.
     /// </summary>
     /// <param name="idleTimeout">The idle timeout period</param>
     /// <returns>True if the session is idle, false otherwise</returns>
-    public bool IsIdle(TimeSpan idleTimeout)
-    {
-        return DateTime.UtcNow - LastActivityAt > idleTimeout;
-    }
+    public bool IsIdle(TimeSpan idleTimeout) => DateTime.UtcNow - LastActivityAt > idleTimeout;
 }

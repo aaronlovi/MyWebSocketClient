@@ -56,10 +56,10 @@ public class WebSocketMiddlewareTests
         };
         
         _middleware = new WebSocketMiddleware(next, _mockWebSocketHandler.Object, _options, _mockLogger.Object);
-        
-        _mockHttpContext.Setup(c => c.Request).Returns(_mockHttpRequest.Object);
-        _mockHttpContext.Setup(c => c.Response).Returns(_mockHttpResponse.Object);
-        _mockHttpContext.Setup(c => c.WebSockets).Returns(_mockWebSocketManager.Object);
+
+        _ = _mockHttpContext.Setup(c => c.Request).Returns(_mockHttpRequest.Object);
+        _ = _mockHttpContext.Setup(c => c.Response).Returns(_mockHttpResponse.Object);
+        _ = _mockHttpContext.Setup(c => c.WebSockets).Returns(_mockWebSocketManager.Object);
     }
 
     /// <summary>
@@ -69,7 +69,7 @@ public class WebSocketMiddlewareTests
     public async Task InvokeAsync_PathDoesNotMatch_CallsNext()
     {
         // Arrange
-        _mockHttpRequest.Setup(r => r.Path).Returns("/not-ws");
+        _ = _mockHttpRequest.Setup(r => r.Path).Returns("/not-ws");
         
         // Act
         await _middleware.InvokeAsync(_mockHttpContext.Object);
@@ -86,8 +86,8 @@ public class WebSocketMiddlewareTests
     public async Task InvokeAsync_PathMatchesNotWebSocketRequest_Returns400()
     {
         // Arrange
-        _mockHttpRequest.Setup(r => r.Path).Returns(_options.Path);
-        _mockWebSocketManager.Setup(m => m.IsWebSocketRequest).Returns(false);
+        _ = _mockHttpRequest.Setup(r => r.Path).Returns(_options.Path);
+        _ = _mockWebSocketManager.Setup(m => m.IsWebSocketRequest).Returns(false);
         
         // Act
         await _middleware.InvokeAsync(_mockHttpContext.Object);
@@ -104,9 +104,9 @@ public class WebSocketMiddlewareTests
     public async Task InvokeAsync_ValidWebSocketRequest_AcceptsAndHandlesWebSocket()
     {
         // Arrange
-        _mockHttpRequest.Setup(r => r.Path).Returns(_options.Path);
-        _mockWebSocketManager.Setup(m => m.IsWebSocketRequest).Returns(true);
-        _mockWebSocketManager.Setup(m => m.AcceptWebSocketAsync()).ReturnsAsync(_mockWebSocket.Object);
+        _ = _mockHttpRequest.Setup(r => r.Path).Returns(_options.Path);
+        _ = _mockWebSocketManager.Setup(m => m.IsWebSocketRequest).Returns(true);
+        _ = _mockWebSocketManager.Setup(m => m.AcceptWebSocketAsync()).ReturnsAsync(_mockWebSocket.Object);
         
         // Act
         await _middleware.InvokeAsync(_mockHttpContext.Object);
@@ -129,14 +129,14 @@ public class WebSocketMiddlewareTests
     {
         // Arrange
         _options.RequireAuthentication = true;
-        
-        _mockHttpRequest.Setup(r => r.Path).Returns(_options.Path);
-        _mockWebSocketManager.Setup(m => m.IsWebSocketRequest).Returns(true);
+
+        _ = _mockHttpRequest.Setup(r => r.Path).Returns(_options.Path);
+        _ = _mockWebSocketManager.Setup(m => m.IsWebSocketRequest).Returns(true);
         
         var mockIdentity = new Mock<System.Security.Principal.IIdentity>();
-        mockIdentity.Setup(i => i.IsAuthenticated).Returns(false);
-        
-        _mockHttpContext.Setup(c => c.User.Identity).Returns(mockIdentity.Object);
+        _ = mockIdentity.Setup(i => i.IsAuthenticated).Returns(false);
+
+        _ = _mockHttpContext.Setup(c => c.User.Identity).Returns(mockIdentity.Object);
         
         // Act
         await _middleware.InvokeAsync(_mockHttpContext.Object);
