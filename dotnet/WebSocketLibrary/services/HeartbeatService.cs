@@ -2,6 +2,7 @@ using System;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
+using WebSocketLibrary.Models;
 
 namespace WebSocketLibrary.services
 {
@@ -60,5 +61,12 @@ namespace WebSocketLibrary.services
                 await Task.Delay(PingInterval, cancellationToken);
             }
         }
+
+        /// <summary>
+        /// Checks if the client is unresponsive based on the last pong response.
+        /// </summary>
+        /// <param name="clientSession">The WebSocket client session to check.</param>
+        /// <returns>True if the client is unresponsive, false otherwise.</returns>
+        public bool IsClientUnresponsive(WebSocketClientSession clientSession) => DateTime.UtcNow - clientSession.LastPongAt > TimeoutThreshold;
     }
 }

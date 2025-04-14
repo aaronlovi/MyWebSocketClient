@@ -11,7 +11,7 @@
 | IMP.4.1 | Create a HeartbeatService class in the WebSocketLibrary project with configuration options (ping interval, timeout threshold). | Complete |
 | IMP.4.2 | Implement periodic ping mechanism in HeartbeatService that sends WebSocket ping frames at configurable intervals. | Complete |
 | IMP.4.3 | Implement tracking of pong responses from clients in WebSocketClientSession class. | Complete |
-| IMP.4.4 | Add timeout detection logic to identify unresponsive clients that fail to respond with pong frames. | Pending |
+| IMP.4.4 | Add timeout detection logic to identify unresponsive clients that fail to respond with pong frames. | Complete |
 | IMP.4.5 | Implement client disconnection mechanism for clients that exceed the timeout threshold. | Pending |
 | IMP.4.6 | Add unit tests for HeartbeatService in the WebSocketLibrary.Tests project. | Pending |
 | IMP.4.7 | Integrate HeartbeatService with the existing WebSocketHandler and middleware. | Pending |
