@@ -13,8 +13,11 @@
 | IMP.4.3 | Implement tracking of pong responses from clients in WebSocketClientSession class. | Complete |
 | IMP.4.4 | Add timeout detection logic to identify unresponsive clients that fail to respond with pong frames. | Complete |
 | IMP.4.5 | Implement client disconnection mechanism for clients that exceed the timeout threshold. | Complete |
-| IMP.4.6 | Add unit tests for HeartbeatService in the WebSocketLibrary.Tests project. | Pending |
-| IMP.4.7 | Integrate HeartbeatService with the existing WebSocketHandler and middleware. | Pending |
+| IMP.4.6 | Add unit tests for HeartbeatService in the WebSocketLibrary.Tests project. | Complete |
+| IMP.4.7 | Improve timing in `StartAsync_SendsPingAtConfiguredInterval` test by replacing the fixed delay with a deterministic approach, such as using a mockable timer or event to trigger the pings. | Pending |
+| IMP.4.8 | Enhance test coverage for `HeartbeatService` by adding tests for edge cases, such as when the WebSocket is not in an open state or when the cancellation token is triggered immediately. | Pending |
+| IMP.4.9 | Refactor `HeartbeatService` to make the ping interval and timeout threshold configurable via dependency injection for better testability. | Pending |
+| IMP.4.10 | Integrate HeartbeatService with the existing WebSocketHandler and middleware. | Pending |
 | IMP.5 | Add compression support (per RFC 7692). Add to unit tests in the WebSocketLibrary.Tests project. Add to unit tests in the WebSocketLibrary.Tests project | Pending |
 | IMP.6 | Add message serialization helpers. Add to unit tests in the WebSocketLibrary.Tests project. Add JSON serialization/deserialization helpers to the `WebSocketMessage` class as appropriate. | Pending |
 | IMP.7 | Add WebSocket subprotocol negotiation support. Allow the server to declare supported subprotocols and negotiate with clients. | Pending |
