@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using WebSocketLibrary.Contracts;
 using WebSocketLibrary.Models;
 using WebSocketLibrary.Utilities;
+using WebSocketLibrary.services;
 
 namespace WebSocketLibrary.Services
 {
@@ -20,9 +21,10 @@ namespace WebSocketLibrary.Services
     public class WebSocketHandler : IWebSocketHandler {
         private readonly WebSocketOptions _options;
         private readonly ILogger<WebSocketHandler> _logger;
-        private readonly ConcurrentDictionary<string, WebSocketClientSession> _sessions = new ConcurrentDictionary<string, WebSocketClientSession>();
+        private readonly ConcurrentDictionary<string, WebSocketClientSession> _sessions = new();
         private readonly Timer _idleClientTimer;
         private readonly WebSocketFrameHandler _frameHandler;
+        private readonly HeartbeatService _heartbeatService;
 
         /// <summary>
         /// Event raised when a client connects to the WebSocket server.
@@ -44,9 +46,11 @@ namespace WebSocketLibrary.Services
         /// </summary>
         /// <param name="options">The WebSocket configuration options</param>
         /// <param name="logger">The logger for WebSocketHandler</param>
-        public WebSocketHandler(IOptions<WebSocketOptions> options, ILogger<WebSocketHandler> logger) {
+        /// <param name="heartbeatService">The HeartbeatService for managing client heartbeats</param>
+        public WebSocketHandler(IOptions<WebSocketOptions> options, ILogger<WebSocketHandler> logger, HeartbeatService heartbeatService) {
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _heartbeatService = heartbeatService ?? throw new ArgumentNullException(nameof(heartbeatService));
             _frameHandler = new WebSocketFrameHandler(_options, _logger);
 
             // Start a timer to periodically check for and disconnect idle clients
@@ -73,6 +77,9 @@ namespace WebSocketLibrary.Services
             }
 
             _logger.LogInformation("Client {SessionId} connected", sessionId);
+
+            // Start the heartbeat service for this client
+            _ = _heartbeatService.StartAsync(webSocket, cancellationToken);
 
             // Raise the client connected event
             OnClientConnected(session);

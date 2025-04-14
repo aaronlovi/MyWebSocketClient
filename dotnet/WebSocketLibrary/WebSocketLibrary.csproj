@@ -25,6 +25,10 @@
     <LangVersion>10.0</LangVersion>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <LangVersion>9.0</LangVersion>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.WebSockets" Version="2.3.0" />

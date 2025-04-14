@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using WebSocketLibrary.Contracts;
 using WebSocketLibrary.Services;
+using WebSocketLibrary.services;
 
 namespace WebSocketLibrary.Utilities
 {
@@ -27,6 +28,10 @@ namespace WebSocketLibrary.Utilities
 
             // Register singleton instance of WebSocketHandler
             _ = services.AddSingleton<IWebSocketHandler, WebSocketHandler>();
+
+            // Register HeartbeatService and its options
+            _ = services.Configure<HeartbeatServiceOptions>(_ => { });
+            _ = services.AddSingleton<HeartbeatService>();
 
             return services;
         }

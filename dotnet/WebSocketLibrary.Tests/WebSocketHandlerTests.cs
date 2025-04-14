@@ -9,6 +9,7 @@ using Moq;
 using WebSocketLibrary.Contracts;
 using WebSocketLibrary.Models;
 using WebSocketLibrary.Services;
+using WebSocketLibrary.services;
 
 namespace WebSocketLibrary.Tests;
 
@@ -35,7 +36,8 @@ public class WebSocketHandlerTests {
         _mockWebSocket = new Mock<WebSocket>();
         _mockHttpContext = new Mock<HttpContext>();
 
-        _webSocketHandler = new(_mockOptions.Object, _mockLogger.Object);
+        var mockHeartbeatService = new Mock<HeartbeatService>(MockBehavior.Strict, new HeartbeatServiceOptions(), new Mock<WebSocketLibrary.services.ITimer>().Object);
+        _webSocketHandler = new WebSocketHandler(_mockOptions.Object, _mockLogger.Object, mockHeartbeatService.Object);
     }
 
     /// <summary>
