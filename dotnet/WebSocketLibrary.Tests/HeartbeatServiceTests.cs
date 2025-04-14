@@ -96,4 +96,64 @@ public class HeartbeatServiceTests
             It.IsAny<CancellationToken>()),
             Times.Once);
     }
+
+    /// <summary>
+    /// Verifies that StartAsync does not send pings when the WebSocket is not in an open state.
+    /// </summary>
+    [Fact]
+    public async Task StartAsync_DoesNotSendPing_WhenWebSocketIsNotOpen()
+    {
+        // Arrange
+        var pingInterval = TimeSpan.FromMilliseconds(100);
+        var timeoutThreshold = TimeSpan.FromSeconds(5);
+        var mockTimer = new Mock<ITimer>();
+        var heartbeatService = new HeartbeatService(pingInterval, timeoutThreshold, mockTimer.Object);
+        var mockWebSocket = new Mock<WebSocket>();
+        _ = mockWebSocket.Setup(ws => ws.State).Returns(WebSocketState.Closed);
+        var cancellationTokenSource = new CancellationTokenSource();
+
+        // Act
+        Task task = heartbeatService.StartAsync(mockWebSocket.Object, cancellationTokenSource.Token);
+
+        // Simulate timer triggering pings
+        mockTimer.Raise(timer => timer.Elapsed += null, It.IsAny<object>(), It.IsAny<ElapsedEventArgs>());
+        cancellationTokenSource.Cancel();
+        await task;
+
+        // Assert
+        mockWebSocket.Verify(ws => ws.SendAsync(
+            It.IsAny<ArraySegment<byte>>(),
+            WebSocketMessageType.Binary,
+            true,
+            It.IsAny<CancellationToken>()),
+            Times.Never);
+    }
+
+    /// <summary>
+    /// Verifies that StartAsync exits immediately when the cancellation token is triggered.
+    /// </summary>
+    [Fact]
+    public async Task StartAsync_ExitsImmediately_WhenCancellationTokenIsTriggered()
+    {
+        // Arrange
+        var pingInterval = TimeSpan.FromMilliseconds(100);
+        var timeoutThreshold = TimeSpan.FromSeconds(5);
+        var mockTimer = new Mock<ITimer>();
+        var heartbeatService = new HeartbeatService(pingInterval, timeoutThreshold, mockTimer.Object);
+        var mockWebSocket = new Mock<WebSocket>();
+        _ = mockWebSocket.Setup(ws => ws.State).Returns(WebSocketState.Open);
+        var cancellationTokenSource = new CancellationTokenSource();
+
+        // Act
+        cancellationTokenSource.Cancel();
+        await heartbeatService.StartAsync(mockWebSocket.Object, cancellationTokenSource.Token);
+
+        // Assert
+        mockWebSocket.Verify(ws => ws.SendAsync(
+            It.IsAny<ArraySegment<byte>>(),
+            WebSocketMessageType.Binary,
+            true,
+            It.IsAny<CancellationToken>()),
+            Times.Never);
+    }
 }
