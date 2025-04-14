@@ -18,7 +18,7 @@
 | IMP.4.8 | Enhance test coverage for `HeartbeatService` by adding tests for edge cases, such as when the WebSocket is not in an open state or when the cancellation token is triggered immediately. | Complete |
 | IMP.4.9 | Refactor `HeartbeatService` to make the ping interval and timeout threshold configurable via dependency injection for better testability. | Complete |
 | IMP.4.10 | Integrate HeartbeatService with the existing WebSocketHandler and middleware. | Complete |
-| IMP.4.11 | Add unit tests for the integration of HeartbeatService with the existing WebSocketHandler and middleware. | Pending |
+| IMP.4.11 | Add unit tests for the integration of HeartbeatService with the existing WebSocketHandler and middleware. | Complete |
 | IMP.5 | Add compression support (per RFC 7692). Add to unit tests in the WebSocketLibrary.Tests project. Add to unit tests in the WebSocketLibrary.Tests project | Pending |
 | IMP.6 | Add message serialization helpers. Add to unit tests in the WebSocketLibrary.Tests project. Add JSON serialization/deserialization helpers to the `WebSocketMessage` class as appropriate. | Pending |
 | IMP.7 | Add WebSocket subprotocol negotiation support. Allow the server to declare supported subprotocols and negotiate with clients. | Pending |
