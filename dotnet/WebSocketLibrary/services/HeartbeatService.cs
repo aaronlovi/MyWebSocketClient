@@ -68,5 +68,18 @@ namespace WebSocketLibrary.services
         /// <param name="clientSession">The WebSocket client session to check.</param>
         /// <returns>True if the client is unresponsive, false otherwise.</returns>
         public bool IsClientUnresponsive(WebSocketClientSession clientSession) => DateTime.UtcNow - clientSession.LastPongAt > TimeoutThreshold;
+
+        /// <summary>
+        /// Disconnects a client if it is unresponsive.
+        /// </summary>
+        /// <param name="clientSession">The WebSocket client session to disconnect.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public async Task DisconnectUnresponsiveClientAsync(WebSocketClientSession clientSession)
+        {
+            if (IsClientUnresponsive(clientSession) && clientSession.WebSocket.State == WebSocketState.Open)
+            {
+                await clientSession.WebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client unresponsive", CancellationToken.None);
+            }
+        }
     }
 }
