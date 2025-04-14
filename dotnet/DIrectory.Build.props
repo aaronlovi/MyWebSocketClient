@@ -4,10 +4,11 @@
 		<!-- Individual projects will specify their own TargetFrameworks -->
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>disable</ImplicitUsings>
-		<NoWarn>IDE0290</NoWarn>
+		<NoWarn>IDE0161,IDE0290</NoWarn>
 	</PropertyGroup>
 
 	<!--
+		IDE0161 - Convert to file-scoped namespace
 		IDE0290 - Use primary constructor
 	-->
 	

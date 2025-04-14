@@ -55,10 +55,17 @@ namespace WebSocketLibrary.services
         /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task StartAsync(WebSocket webSocket, CancellationToken cancellationToken)
         {
-            while (!cancellationToken.IsCancellationRequested)
+            try
             {
-                await SendPingAsync(webSocket, cancellationToken);
-                await Task.Delay(PingInterval, cancellationToken);
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    await SendPingAsync(webSocket, cancellationToken);
+                    await Task.Delay(PingInterval, cancellationToken);
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                // Gracefully handle task cancellation
             }
         }
 

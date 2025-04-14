@@ -1,10 +1,6 @@
 using System;
 using System.Net.WebSockets;
-#if NET8_0
 using System.Text.Json.Serialization;
-#elif NETSTANDARD2_0
-using System.Text.Json.Serialization;
-#endif
 
 namespace WebSocketLibrary.Models
 {
@@ -23,6 +19,21 @@ namespace WebSocketLibrary.Models
             WebSocket = webSocket ?? throw new ArgumentNullException(nameof(webSocket));
             ConnectedAt = DateTime.UtcNow;
             LastActivityAt = DateTime.UtcNow;
+        }
+
+        /// <summary>
+        /// Creates a new WebSocketClientSession with the specified session ID and WebSocket.
+        /// </summary>
+        /// <param name="sessionId">The unique ID for this client session.</param>
+        /// <param name="webSocket">The WebSocket connection for this client.</param>
+        /// <param name="lastPongAt">The initial value for the last pong response timestamp.</param>
+        public WebSocketClientSession(string sessionId, WebSocket webSocket, DateTime lastPongAt)
+        {
+            SessionId = sessionId ?? throw new ArgumentNullException(nameof(sessionId));
+            WebSocket = webSocket ?? throw new ArgumentNullException(nameof(webSocket));
+            ConnectedAt = DateTime.UtcNow;
+            LastActivityAt = DateTime.UtcNow;
+            LastPongAt = lastPongAt;
         }
 
         /// <summary>
@@ -67,6 +78,12 @@ namespace WebSocketLibrary.Models
         /// Updates the last pong response timestamp to the current time.
         /// </summary>
         public void UpdatePong() => LastPongAt = DateTime.UtcNow;
+
+        /// <summary>
+        /// Sets the last pong response timestamp for testing purposes.
+        /// </summary>
+        /// <param name="timestamp">The timestamp to set.</param>
+        public void SetLastPongAtForTesting(DateTime timestamp) => LastPongAt = timestamp;
 
         /// <summary>
         /// Determines if the session has been idle for longer than the specified timeout.
