@@ -48,6 +48,11 @@ namespace WebSocketLibrary.Models
         public DateTime LastActivityAt { get; private set; }
 
         /// <summary>
+        /// The time of the last pong response from the client, in UTC.
+        /// </summary>
+        public DateTime LastPongAt { get; private set; }
+
+        /// <summary>
         /// Any custom user data associated with this session.
         /// May be null if no user data has been set.
         /// </summary>
@@ -57,6 +62,11 @@ namespace WebSocketLibrary.Models
         /// Updates the last activity timestamp to the current time.
         /// </summary>
         public void UpdateActivity() => LastActivityAt = DateTime.UtcNow;
+
+        /// <summary>
+        /// Updates the last pong response timestamp to the current time.
+        /// </summary>
+        public void UpdatePong() => LastPongAt = DateTime.UtcNow;
 
         /// <summary>
         /// Determines if the session has been idle for longer than the specified timeout.
