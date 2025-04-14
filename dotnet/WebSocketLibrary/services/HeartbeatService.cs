@@ -66,32 +66,37 @@ namespace WebSocketLibrary.services
     }
 
     /// <summary>
+    /// Configuration options for the HeartbeatService.
+    /// </summary>
+    public class HeartbeatServiceOptions
+    {
+        /// <summary>
+        /// Gets or sets the interval between ping frames.
+        /// </summary>
+        public TimeSpan PingInterval { get; set; } = TimeSpan.FromSeconds(30);
+
+        /// <summary>
+        /// Gets or sets the timeout threshold for detecting connection issues.
+        /// </summary>
+        public TimeSpan TimeoutThreshold { get; set; } = TimeSpan.FromMinutes(1);
+    }
+
+    /// <summary>
     /// Provides functionality for managing WebSocket heartbeat operations.
     /// </summary>
     public class HeartbeatService
     {
         private readonly ITimer _timer;
-
-        /// <summary>
-        /// Gets or sets the interval between ping frames.
-        /// </summary>
-        public TimeSpan PingInterval { get; set; }
-
-        /// <summary>
-        /// Gets or sets the timeout threshold for detecting connection issues.
-        /// </summary>
-        public TimeSpan TimeoutThreshold { get; set; }
+        private readonly HeartbeatServiceOptions _options;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HeartbeatService"/> class.
         /// </summary>
-        /// <param name="pingInterval">The interval between ping frames.</param>
-        /// <param name="timeoutThreshold">The timeout threshold for detecting connection issues.</param>
+        /// <param name="options">The configuration options for the heartbeat service.</param>
         /// <param name="timer">The timer instance to use for triggering pings.</param>
-        public HeartbeatService(TimeSpan pingInterval, TimeSpan timeoutThreshold, ITimer timer)
+        public HeartbeatService(HeartbeatServiceOptions options, ITimer timer)
         {
-            PingInterval = pingInterval;
-            TimeoutThreshold = timeoutThreshold;
+            _options = options;
             _timer = timer;
         }
 
@@ -132,7 +137,7 @@ namespace WebSocketLibrary.services
         /// </summary>
         /// <param name="clientSession">The WebSocket client session to check.</param>
         /// <returns>True if the client is unresponsive, false otherwise.</returns>
-        public bool IsClientUnresponsive(WebSocketClientSession clientSession) => DateTime.UtcNow - clientSession.LastPongAt > TimeoutThreshold;
+        public bool IsClientUnresponsive(WebSocketClientSession clientSession) => DateTime.UtcNow - clientSession.LastPongAt > _options.TimeoutThreshold;
 
         /// <summary>
         /// Disconnects a client if it is unresponsive.

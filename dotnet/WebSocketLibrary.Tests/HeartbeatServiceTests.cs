@@ -27,7 +27,12 @@ public class HeartbeatServiceTests
         var pingInterval = TimeSpan.FromMilliseconds(100);
         var timeoutThreshold = TimeSpan.FromSeconds(5);
         var mockTimer = new Mock<ITimer>();
-        var heartbeatService = new HeartbeatService(pingInterval, timeoutThreshold, mockTimer.Object);
+        var options = new HeartbeatServiceOptions
+        {
+            PingInterval = pingInterval,
+            TimeoutThreshold = timeoutThreshold
+        };
+        var heartbeatService = new HeartbeatService(options, mockTimer.Object);
         var mockWebSocket = new Mock<WebSocket>();
         _ = mockWebSocket.Setup(ws => ws.State).Returns(WebSocketState.Open);
         var cancellationTokenSource = new CancellationTokenSource();
@@ -61,7 +66,12 @@ public class HeartbeatServiceTests
         var pingInterval = TimeSpan.FromMilliseconds(100);
         var timeoutThreshold = TimeSpan.FromSeconds(5);
         var mockTimer = new Mock<ITimer>();
-        var heartbeatService = new HeartbeatService(pingInterval, timeoutThreshold, mockTimer.Object);
+        var options = new HeartbeatServiceOptions
+        {
+            PingInterval = pingInterval,
+            TimeoutThreshold = timeoutThreshold
+        };
+        var heartbeatService = new HeartbeatService(options, mockTimer.Object);
         var clientSession = new WebSocketClientSession("test-session", new Mock<WebSocket>().Object, DateTime.UtcNow - TimeSpan.FromSeconds(10));
 
         // Act
@@ -81,7 +91,12 @@ public class HeartbeatServiceTests
         var pingInterval = TimeSpan.FromMilliseconds(100);
         var timeoutThreshold = TimeSpan.FromSeconds(5);
         var mockTimer = new Mock<ITimer>();
-        var heartbeatService = new HeartbeatService(pingInterval, timeoutThreshold, mockTimer.Object);
+        var options = new HeartbeatServiceOptions
+        {
+            PingInterval = pingInterval,
+            TimeoutThreshold = timeoutThreshold
+        };
+        var heartbeatService = new HeartbeatService(options, mockTimer.Object);
         var mockWebSocket = new Mock<WebSocket>();
         _ = mockWebSocket.Setup(ws => ws.State).Returns(WebSocketState.Open);
         var clientSession = new WebSocketClientSession("test-session", mockWebSocket.Object, DateTime.UtcNow - TimeSpan.FromSeconds(10));
@@ -107,7 +122,12 @@ public class HeartbeatServiceTests
         var pingInterval = TimeSpan.FromMilliseconds(100);
         var timeoutThreshold = TimeSpan.FromSeconds(5);
         var mockTimer = new Mock<ITimer>();
-        var heartbeatService = new HeartbeatService(pingInterval, timeoutThreshold, mockTimer.Object);
+        var options = new HeartbeatServiceOptions
+        {
+            PingInterval = pingInterval,
+            TimeoutThreshold = timeoutThreshold
+        };
+        var heartbeatService = new HeartbeatService(options, mockTimer.Object);
         var mockWebSocket = new Mock<WebSocket>();
         _ = mockWebSocket.Setup(ws => ws.State).Returns(WebSocketState.Closed);
         var cancellationTokenSource = new CancellationTokenSource();
@@ -139,7 +159,12 @@ public class HeartbeatServiceTests
         var pingInterval = TimeSpan.FromMilliseconds(100);
         var timeoutThreshold = TimeSpan.FromSeconds(5);
         var mockTimer = new Mock<ITimer>();
-        var heartbeatService = new HeartbeatService(pingInterval, timeoutThreshold, mockTimer.Object);
+        var options = new HeartbeatServiceOptions
+        {
+            PingInterval = pingInterval,
+            TimeoutThreshold = timeoutThreshold
+        };
+        var heartbeatService = new HeartbeatService(options, mockTimer.Object);
         var mockWebSocket = new Mock<WebSocket>();
         _ = mockWebSocket.Setup(ws => ws.State).Returns(WebSocketState.Open);
         var cancellationTokenSource = new CancellationTokenSource();
